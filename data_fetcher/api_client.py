@@ -1,23 +1,27 @@
-import requests
+import requests # 'requests' is a popular third-party library for making HTTP requests.
 from typing import List, Dict, Any
 
 def fetch_data_from_source(api_url: str) -> List[Dict[str, Any]]:
     """
     Fetches data from the specified API endpoint.
+    Uses the 'requests' library to perform a GET request.
 
     Args:
-        api_url: The URL of the API endpoint to fetch data from.
+        api_url: The URL string of the API endpoint.
 
     Returns:
-        A list of dictionaries representing the JSON response from the API.
-        Returns an empty list if the request fails or the response is not valid JSON.
-
-    Raises:
-        requests.exceptions.RequestException: If there's an issue with the network request.
+        A list of dictionaries containing the parsed JSON data.
     """
     try:
-        response = requests.get(api_url, timeout=10) # 10-second timeout
-        response.raise_for_status()  # Raises an HTTPError for bad responses (4XX or 5XX)
+        # Perform an HTTP GET request to the specified URL.
+        # timeout=10 ensures the request doesn't hang indefinitely if the server is slow.
+        response = requests.get(api_url, timeout=10)
+
+        # raise_for_status() checks if the response contains an error status code (e.g., 404, 500).
+        # If it does, it raises an HTTPError exception.
+        response.raise_for_status()
+
+        # .json() parses the response body as JSON and returns it as a Python object (list/dict).
         return response.json()
     except requests.exceptions.Timeout:
         print(f"Request to {api_url} timed out.")

@@ -3,40 +3,41 @@ from typing import List, Dict, Any
 def process_todos(raw_todos: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     Processes a list of raw todo items.
-    For this example, it filters for essential information and perhaps
-    could transform it if needed.
+    Filters for essential fields: 'id', 'title', and 'completed'.
 
     Args:
-        raw_todos: A list of dictionaries, where each dictionary represents a raw todo item
-                   (e.g., from JSONPlaceholder). Expected keys: 'userId', 'id', 'title', 'completed'.
+        raw_todos: A list of dictionaries from the API.
 
     Returns:
-        A list of processed todo items, each containing 'id', 'title', and 'completed' status.
-        Returns an empty list if input is empty or items are malformed.
+        A list of cleaned-up dictionaries.
     """
     processed_list = []
     if not raw_todos:
         return processed_list
 
+    # Loop through each dictionary in the list.
     for todo in raw_todos:
         try:
-            # Ensure essential keys are present
+            # Check if all required keys exist in the dictionary.
             if 'id' in todo and 'title' in todo and 'completed' in todo:
-                # Add a specific check for the type of 'completed'
+
+                # Check the data type of 'completed' using isinstance().
                 if not isinstance(todo["completed"], bool):
                     print(f"Skipping todo item {todo.get('id', 'Unknown ID')} due to non-boolean 'completed' field: {todo['completed']}")
-                    continue # Skip if 'completed' is not a boolean
+                    continue # Skip this iteration and go to the next item.
 
+                # Append a new dictionary with only the desired fields to our results list.
+                # int() and str() are used here to ensure the data is of the expected type.
                 processed_list.append({
                     "id": int(todo["id"]),
                     "title": str(todo["title"]),
-                    "completed": todo["completed"] # Already a bool
+                    "completed": todo["completed"]
                 })
             else:
                 print(f"Skipping malformed todo item: {todo}")
         except (TypeError, ValueError) as e:
+            # If casting (int() or str()) fails, catch the error and skip the item.
             print(f"Error processing todo item {todo.get('id', 'Unknown ID')}: {e}")
-            # Optionally, decide whether to skip or handle more gracefully
             continue
 
     return processed_list
